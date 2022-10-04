@@ -36,20 +36,3 @@ class UserServiceImpl(private val userRepository: UserRepository): UserService {
         userRepository.createUser(user)
     }
 }
-
-
-//@Component
-//class UserServiceImpl : UserService {
-//    companion object {
-//        var initUsers = arrayOf<User>(
-//            User("alsrb4298@naver.com", "als2623", "mingyu"),
-//            User("mingyu@naver.com", "2623", "mingyuu")
-//        )
-//    }
-//    var users = ConcurrentHashMap<String, User>(initUsers.associateBy(User::email))
-//
-//    override fun getUser(email: String): User? = users[email]
-//    override fun createUser(user: User) { users[user.email] = user }
-//    override fun deleteUser(email: String) { users.remove(email) }
-//}
-

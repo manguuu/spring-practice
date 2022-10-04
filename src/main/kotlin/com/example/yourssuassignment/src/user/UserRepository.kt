@@ -13,6 +13,7 @@ import javax.sql.DataSource
 @Repository
 class UserRepository {
     private var jdbcTemplate: JdbcTemplate? = null
+
     @Autowired
     fun setDataSource(dataSource: DataSource?) {
         jdbcTemplate = JdbcTemplate(dataSource!!)
@@ -54,7 +55,7 @@ class UserRepository {
                 query,
                 RowMapper { rs: ResultSet, _: Int ->
                     User(
-                        rs.getInt("user_id"),
+                        rs.getLong("user_id"),
                         rs.getString("email"),
                         rs.getString("password"),
                         rs.getString("username"),

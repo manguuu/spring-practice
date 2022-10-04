@@ -6,7 +6,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 data class User(
-    val Id: Int?,
+    val Id: Long?,
     var email: String,
     var password: String,
     var username: String,
