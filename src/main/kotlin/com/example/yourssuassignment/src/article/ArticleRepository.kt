@@ -66,7 +66,7 @@ class ArticleRepository {
     }
 
     fun getUserEmailPassword(articleId: Long): UserEmailPassword? {
-        val query = "select email, password from user join article a on user.user_id = a.user_id where article_id=?"
+        val query = "select email, password, user.user_id from user join article a on user.user_id = a.user_id where article_id=?"
         try {
             return jdbcTemplate!!.queryForObject(
                 query,
@@ -74,6 +74,7 @@ class ArticleRepository {
                     UserEmailPassword(
                         rs.getString("email"),
                         rs.getString("password"),
+                        rs.getLong("user_id")
                     )
                 }, articleId)
         } catch (e: EmptyResultDataAccessException) {

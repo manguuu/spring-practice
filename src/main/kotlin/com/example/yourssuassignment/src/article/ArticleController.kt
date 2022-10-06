@@ -23,7 +23,7 @@ class ArticleController {
         }
     }
 
-    @PostMapping("/post-article")
+    @PostMapping("/post")
     fun createUser(@RequestBody articleReq: CreateArticleReq): BaseResponse<Any> {
         try {
             articleService.createArticle(articleReq)
