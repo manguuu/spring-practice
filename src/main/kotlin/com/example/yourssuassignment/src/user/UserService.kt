@@ -15,8 +15,8 @@ interface UserService {
 
 @Service
 class UserServiceImpl(private val userRepository: UserRepository): UserService {
-    override fun getUser(email: String): User? {
-        return userRepository.getUser(email)
+    override fun getUser(email: String): User {
+        return userRepository.getUser(email) ?: throw BaseException(NOT_EXISTS_USER)
     }
 
     override fun deleteUser(deleteUser: DeleteUser) {
