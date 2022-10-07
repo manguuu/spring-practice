@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 interface CommentService {
-    fun createComment(createComment: CreateComment)
+    fun createComment(createComment: CreateComment): Long
     fun updateComment(updateComment: UpdateComment)
     fun deleteComment(deleteComment: DeleteComment)
 }
@@ -30,19 +30,20 @@ class CommentServiceImpl(
         return false
     }
 
-    @Transactional
-    override fun createComment(createComment: CreateComment) {
+    @Transactional(rollbackFor = [BaseException::class])
+    override fun createComment(createComment: CreateComment): Long {
         if (checkIsEmpty(createComment.content)) throw BaseException(EMPTY_CONTENT)
         val userInfo = articleRepository.getUserEmailPassword(createComment.articleId)
             ?: throw BaseException(NOT_EXISTS_ARTICLE)
         if (userInfo.email != createComment.email) throw BaseException(INVALID_EMAIL)
         if (userInfo.password != createComment.password) throw BaseException(INVALID_PASSWORD)
 
-        commentRepository.createComment(
+        return commentRepository.createComment(
             Comment(createComment.content, userInfo.id, createComment.articleId)
         )
     }
 
+    @Transactional(rollbackFor = [BaseException::class])
     override fun updateComment(updateComment: UpdateComment) {
         val user: User = userRepository.getUser(updateComment.email) ?: throw BaseException(NOT_EXISTS_USER)
         if (user.password != updateComment.password) throw BaseException(INVALID_PASSWORD)
@@ -51,15 +52,16 @@ class CommentServiceImpl(
         if (commentRepository.updateComment(updateComment) == 0) throw BaseException(DATABASE_ERROR)
     }
 
+    @Transactional(rollbackFor = [BaseException::class])
     override fun deleteComment(deleteComment: DeleteComment) {
-        val user: User = userRepository.getUser(deleteComment.email) ?: throw BaseException(NOT_EXISTS_USER)
+        val user: User = userRepository.getUser(deleteComment.email) ?: throw BaseException(INVALID_USERID)
         if (articleRepository.getArticle(deleteComment.articleId) == null) {
             throw BaseException(NOT_EXISTS_ARTICLE)
         }
         if (user.password != deleteComment.password) {
             throw BaseException(INVALID_PASSWORD)
         }
-        commentRepository.deleteComment(deleteComment.commentId)
+        commentRepository.deleteCommentByCommentId(deleteComment.commentId)
     }
 
 }

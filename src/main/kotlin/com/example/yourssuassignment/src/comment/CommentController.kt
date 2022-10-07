@@ -6,6 +6,7 @@ import com.example.yourssuassignment.src.article.model.UpdateArticle
 import com.example.yourssuassignment.src.article.model.UpdateArticleReq
 import com.example.yourssuassignment.src.comment.model.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,40 +16,40 @@ class CommentController {
     private lateinit var commentService: CommentService
 
     @PostMapping("post/{articleId}")
-    fun createComment(@RequestBody createCommentReq: CommentReq, @PathVariable articleId: Long): BaseResponse<Any> {
-        try {
-            commentService.createComment(CreateComment(createCommentReq, articleId))
+    fun createComment(@RequestBody commentReq: CommentReq, @PathVariable articleId: Long): ResponseEntity<Any> {
+        return try {
+            val commentId = commentService.createComment(CreateComment(commentReq, articleId))
+            ResponseEntity.ok().body(CommentRes(commentId, commentReq))
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("comment create 성공")
     }
 
-    @PutMapping("/update/{articleId}/{commentId}")
+    @PutMapping("/update")
     fun updateArticle(
         @RequestBody commentReq: CommentReq,
-        @PathVariable articleId: Long,
-        @PathVariable commentId: Long
-    ): BaseResponse<Any> {
-        try {
+        @RequestParam articleId: Long,
+        @RequestParam commentId: Long
+    ): ResponseEntity<Any> {
+        return try {
             commentService.updateComment(UpdateComment(commentReq, articleId, commentId))
+            ResponseEntity.ok().body(CommentRes(commentId, commentReq))
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("comment update 성공")
     }
 
-    @DeleteMapping("/delete/{articleId}/{commentId}")
+    @DeleteMapping("/delete")
     fun deleteComment(
         @RequestBody deleteCommentReq: DeleteCommentReq,
-        @PathVariable articleId: Long,
-        @PathVariable commentId: Long
-    ): BaseResponse<Any> {
-        try {
+        @RequestParam articleId: Long,
+        @RequestParam commentId: Long
+    ): ResponseEntity<Any> {
+        return try {
             commentService.deleteComment(DeleteComment(deleteCommentReq, articleId, commentId))
+            ResponseEntity.ok().body(BaseResponse())
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("comment delete 성공")
     }
 }
