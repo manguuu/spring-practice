@@ -1,6 +1,6 @@
 package com.example.yourssuassignment.src.user.model
 
-class UserEmailPassword(
+class UserEmailPasswordId(
     val email: String,
     val password: String,
     val id: Long

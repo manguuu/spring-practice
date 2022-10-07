@@ -5,6 +5,7 @@ import com.example.yourssuassignment.config.BaseResponse
 import com.example.yourssuassignment.config.BaseResponseStatus.*
 import com.example.yourssuassignment.src.article.model.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,42 +15,42 @@ class ArticleController {
     private lateinit var articleService: ArticleService
 
     @GetMapping("/{articleId}")
-    fun getArticle(@PathVariable articleId: Long): BaseResponse<Any?> {
-        try {
+    fun getArticle(@PathVariable articleId: Long): ResponseEntity<Any> {
+        return try {
             val article: Article? = articleService.getArticle(articleId)
-            return BaseResponse(article)
+            ResponseEntity.ok().body(article)
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
     }
 
     @PostMapping("/post")
-    fun createUser(@RequestBody articleReq: CreateArticleReq): BaseResponse<Any> {
-        try {
-            articleService.createArticle(articleReq)
+    fun createUser(@RequestBody articleReq: CreateArticleReq): ResponseEntity<Any> {
+        return try {
+            val articleId: Long = articleService.createArticle(articleReq)
+            ResponseEntity.ok().body(ArticleRes(articleId, articleReq))
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("article post 성공")
     }
 
     @DeleteMapping("/delete/{articleId}")
-    fun deleteArticle(@RequestBody deleteArticleReq: DeleteArticleReq, @PathVariable articleId: Long): BaseResponse<Any> {
-        try {
+    fun deleteArticle(@RequestBody deleteArticleReq: DeleteArticleReq, @PathVariable articleId: Long): BaseResponse {
+        return try {
             articleService.deleteArticle(DeleteArticle(deleteArticleReq.email, deleteArticleReq.password, articleId))
+            BaseResponse()
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            BaseResponse(e.status)
         }
-        return BaseResponse("article delete 성공")
     }
 
     @PutMapping("/update/{articleId}")
-    fun updateArticle(@RequestBody updateArticleReq: UpdateArticleReq, @PathVariable articleId: Long): BaseResponse<Any> {
-        try {
+    fun updateArticle(@RequestBody updateArticleReq: UpdateArticleReq, @PathVariable articleId: Long): ResponseEntity<Any> {
+        return try {
             articleService.updateArticle(UpdateArticle(updateArticleReq, articleId))
+            ResponseEntity.ok().body(ArticleRes(articleId, updateArticleReq))
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("article update 성공")
     }
 }
