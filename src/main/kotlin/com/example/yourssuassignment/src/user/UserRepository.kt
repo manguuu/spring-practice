@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.sql.ResultSet
 import javax.sql.DataSource
 
@@ -70,7 +71,7 @@ class UserRepository {
 
     //회원탈퇴
     fun deleteUser(email: String): Int {
-        val query = "delete from user where email = ?"
+        val query = "delete from user where email=?"
         return jdbcTemplate!!.update(query, email)
     }
 }

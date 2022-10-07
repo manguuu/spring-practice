@@ -1,12 +1,9 @@
 package com.example.yourssuassignment.src.user.model
 
 import java.sql.Timestamp
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 
 data class User(
-    val Id: Long?,
+    val userId: Long?,
     var email: String,
     var password: String,
     var username: String,

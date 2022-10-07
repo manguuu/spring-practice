@@ -3,6 +3,7 @@ package com.example.yourssuassignment.src.user
 import com.example.yourssuassignment.config.BaseException
 import com.example.yourssuassignment.config.BaseResponse
 import com.example.yourssuassignment.config.BaseResponseStatus
+import com.example.yourssuassignment.src.user.model.CreateUserRes
 import com.example.yourssuassignment.src.user.model.DeleteUser
 import com.example.yourssuassignment.src.user.model.PostUser
 import com.example.yourssuassignment.src.user.model.User
@@ -17,33 +18,33 @@ class UserController {
     private lateinit var userService: UserService
 
     @GetMapping("/{email}")
-    fun getUser(@PathVariable email: String): BaseResponse<Any?> {
-        try {
+    fun getUser(@PathVariable email: String): ResponseEntity<Any> {
+        return try {
             val user: User? = userService.getUser(email)
-            return BaseResponse(user)
+            ResponseEntity.ok().body(user)
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
     }
 
     @PostMapping("/sign-in")
-    fun createUser(@RequestBody postUser: PostUser): BaseResponse<Any> {
+    fun createUser(@RequestBody postUser: PostUser): ResponseEntity<Any> {
         val user = User(postUser.email, postUser.password, postUser.username)
-        try {
+        return try {
             userService.createUser(user)
+            ResponseEntity.ok().body(CreateUserRes(postUser.email, postUser.password))
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("회원 가입 성공\n")
     }
 
     @DeleteMapping("/delete")
-    fun deleteUser(@RequestBody deleteUser: DeleteUser): BaseResponse<Any> {
-        try {
+    fun deleteUser(@RequestBody deleteUser: DeleteUser): ResponseEntity<Any> {
+        return try {
             userService.deleteUser(deleteUser)
+            ResponseEntity.ok().body(BaseResponse())
         } catch (e: BaseException) {
-            return BaseResponse(e.status)
+            ResponseEntity.badRequest().body(BaseResponse(e.status))
         }
-        return BaseResponse("회원 탈퇴 성공")
     }
 }
